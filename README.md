@@ -1,50 +1,38 @@
-# React + TypeScript + Vite
+# 프론드엔드 개발 온보딩 과제
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+-----
+## 프로젝트의 목표
+- 이 프로젝트는 실제 업무에서 필요한 필수 역량을 개발자가 익히고 실습할 수 있도록 구성된 온보딩 과제입니다.
+- 주로 사용자 인증 및 권한 관리, 클라이언트 사이드 및 서버 사이드 상태 관리, 외부 API 통신 등을 포함합니다.
 
-Currently, two official plugins are available:
+----
+## 기능
+### 1. 회원가입
+- 사용자가 아이디, 비밀번호 및 닉네임 입력하여 회원가입을 할 수 있습니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 2. 로그인
+- 아이디와 비밀번호를 이용하여 로그인 기능을 구현합니다.
 
-## Expanding the ESLint configuration
+### 3. 권한별 라우팅 제어
+- 로그인 상태에 따라 접근 가능한 페이지를 제어합니다.
+- 로그인된 사용자만 특정 페이지에 접근할 수 있도록 설정됩니다.
+  
+### 4. zustand를 통한 client-side 전역 state 관리
+- Zustand를 사용하여 액세스 토큰을 클라이언트 사이드 전역 상태로 관리합니다.
+- 로그인 및 인증 상태를 쉽게 관리하고, 필요한 컴포넌트에서 전역 상태를 참조할 수 있습니다.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 5. axios, tanstack-query를 통한 외부통신 및 server-side 전역 state 관리
+- Axios를 사용하여 외부 API와 통신합니다.
+- Tanstack Query를 활용하여 서버 사이드 상태를 효율적으로 관리합니다.
+- 서버로부터 받아온 데이터를 관리하고 캐싱하여 페이지의 렌더링 성능을 개선합니다.
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+----
+## 사용한 툴
+- React
+- TypeScript
+- Tailwind CSS
+- Tanstack Query
+- Zustand
+- React Router DOM
+- Axios
+- Vite

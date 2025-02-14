@@ -31,10 +31,9 @@ const Router = () => {
           <Route element={<PublicRoute />}>
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
-          </Route>
-          <Route element={<PrivateRoute />}>
             <Route path="profile" element={<Profile />} />
           </Route>
+          <Route element={<PrivateRoute />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>

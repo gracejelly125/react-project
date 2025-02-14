@@ -1,14 +1,9 @@
 import axios from "axios";
+import { ProfileFormData, UserData } from "../types/types";
 
 const authApi = axios.create({
-  baseURL: "https://moneyfulpublicpolicy.co.kr",
+  baseURL: import.meta.env.VITE_BASE_API_URL,
 });
-
-type UserData = {
-  id: string;
-  password: string;
-  nickname?: string;
-};
 
 export const register = async (userData: UserData) => {
   try {
@@ -42,12 +37,7 @@ export const getUserProfile = async (token: string) => {
   }
 };
 
-type FormData = {
-  avatar: null | string;
-  nickname: string;
-};
-
-export const updateProfile = async (formData: FormData) => {
+export const updateProfile = async (formData: ProfileFormData) => {
   const token = localStorage.getItem("accessToken");
   try {
     const response = await authApi.patch("/profile", formData, {

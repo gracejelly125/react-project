@@ -1,88 +1,54 @@
-import { useEffect, useState } from "react";
-import { getUserProfile, updateProfile } from "../api/auth";
+import { useState, useEffect } from "react";
 import useInput from "../hooks/useInput";
 import defaultAvatar from "../assets/images/default.png";
 import { ProfileFormData } from "../types/types";
+import useUserProfileQuery from "../hooks/useUserProfileQuery";
+import useUpdateProfileMutation from "../hooks/useUpdateProfileMutation";
 
 const Profile = () => {
+  const { data: userProfile, isPending, isError } = useUserProfileQuery();
+  const { mutate: updateProfileMutation } = useUpdateProfileMutation();
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [currentNickname, setCurrentNickname] = useState<string>("");
   const [imagePreview, setImagePreview] = useState<string>("");
-
   const newNickname = useInput("");
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
-      try {
-        const userProfile = await getUserProfile(token);
-        setCurrentNickname(userProfile.nickname);
+    if (userProfile?.avatar && !imagePreview) {
+      if (typeof userProfile.avatar === "string") {
         setImagePreview(userProfile.avatar);
-      } catch (error) {
-        console.error("프로필 정보 불러오기 실패:", error);
+      } else if (userProfile.avatar instanceof File) {
+        setImagePreview(URL.createObjectURL(userProfile.avatar));
       }
-    };
-    fetchUserProfile();
-  }, []);
+    }
+  }, [userProfile?.avatar, imagePreview]);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setProfileImage(file);
-
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
-
-      const newPreview = URL.createObjectURL(file);
-      setImagePreview(newPreview);
+      setImagePreview((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return URL.createObjectURL(file);
+      });
     }
   };
 
-  const handleImageUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleImageUpdate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const formData = new FormData();
-
-    if (profileImage) {
-      formData.append("avatar", profileImage);
-    }
-    if (newNickname.value) {
-      formData.append("nickname", newNickname.value);
-    }
-
-    const avatarData = formData.get("avatar");
     const profileFormData: ProfileFormData = {
-      avatar: avatarData instanceof File ? avatarData : null,
-      nickname: (formData.get("nickname") as string) || "",
+      avatar: profileImage,
+      nickname: newNickname.value,
     };
 
-    try {
-      const updateSuccess = await updateProfile(profileFormData);
-      if (updateSuccess) {
-        alert("프로필 업데이트에 성공했습니다!");
-        setImagePreview(updateSuccess.avatar || imagePreview);
-        setCurrentNickname(newNickname.value || currentNickname);
-        newNickname.reset();
-      }
-    } catch (error) {
-      console.error("프로필 업데이트 실패:", error);
-      alert("프로필 업데이트에 실패했습니다!");
-    }
+    updateProfileMutation(profileFormData);
+    newNickname.reset();
   };
-
-  useEffect(() => {
-    return () => {
-      if (imagePreview) {
-        URL.revokeObjectURL(imagePreview);
-      }
-    };
-  }, [imagePreview]);
 
   return (
     <div className="flex flex-col items-center">
       <h2 className="text-xl font-bold mx-auto my-5">프로필 수정</h2>
+
       <form
         className="flex flex-col items-center mb-8"
         onSubmit={handleImageUpdate}
@@ -106,7 +72,11 @@ const Profile = () => {
         />
       </form>
 
-      <div className="flex flex-col max-w-sm mx-auto">
+      {isError && (
+        <p className="text-red-500 mb-5">프로필 정보를 불러오지 못했습니다.</p>
+      )}
+
+      <div className="flex flex-col max-w-sm mx-auto ">
         <form className="common-form" onSubmit={handleImageUpdate}>
           <div className="flex flex-col">
             <label htmlFor="nickname" className="mb-1">
@@ -115,15 +85,20 @@ const Profile = () => {
             <input
               id="nickname"
               type="text"
-              value={newNickname.value || currentNickname}
+              value={newNickname.value || userProfile?.nickname || ""}
               placeholder="닉네임"
               onChange={newNickname.handler}
               required
               className="common-input"
+              disabled={isPending}
             />
           </div>
-          <button className="common-btn !px-10 mx-auto" type="submit">
-            프로필 업데이트
+          <button
+            className="common-btn !px-10 mx-auto w-full"
+            type="submit"
+            disabled={isPending}
+          >
+            {isPending ? "업데이트 중..." : "프로필 업데이트"}
           </button>
         </form>
       </div>

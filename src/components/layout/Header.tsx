@@ -18,6 +18,11 @@ const Header = () => {
           {isAuthenticated ? (
             <>
               <li>
+                <Link className="common-btn" to="/profile">
+                  마이페이지
+                </Link>
+              </li>
+              <li>
                 <button
                   className="common-btn"
                   onClick={() => {
@@ -30,11 +35,6 @@ const Header = () => {
             </>
           ) : (
             <>
-              <li>
-                <Link className="common-btn" to="/profile">
-                  마이페이지
-                </Link>
-              </li>
               <li>
                 <Link className="common-btn" to="/login">
                   로그인

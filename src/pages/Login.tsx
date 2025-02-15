@@ -3,6 +3,7 @@ import AuthForm from "../components/AuthForm";
 import useInput from "../hooks/useInput";
 import { login } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
+import * as Sentry from "@sentry/react";
 
 const Login = () => {
   const userId = useInput("");
@@ -22,8 +23,9 @@ const Login = () => {
       userId.reset();
       password.reset();
     } catch (error) {
-      console.error("error =>", error);
+      console.error("로그인 실패:", error);
       alert("로그인 실패! 다시 시도해주세요.");
+      Sentry.captureException(error);
     }
   };
 

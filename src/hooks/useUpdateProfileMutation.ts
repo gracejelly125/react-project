@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProfile } from "../api/auth";
 import { ProfileFormData } from "../types/types";
+import * as Sentry from "@sentry/react";
 
 const useUpdateProfileMutation = () => {
   const queryClient = useQueryClient();
@@ -16,6 +17,7 @@ const useUpdateProfileMutation = () => {
     onError: (error) => {
       console.error("프로필 업데이트 실패:", error);
       alert("프로필 업데이트에 실패했습니다!");
+      Sentry.captureException(error);
     },
   });
 };

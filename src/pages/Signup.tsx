@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useInput from "../hooks/useInput";
 import { register } from "../api/auth";
 import AuthForm from "../components/AuthForm";
+import * as Sentry from "@sentry/react";
 
 const Signup = () => {
   const userId = useInput("");
@@ -22,8 +23,9 @@ const Signup = () => {
       password.reset();
       nickname.reset();
     } catch (error) {
-      console.error("error =>", error);
+      console.error("회원가입 실패:", error);
       alert("회원가입 실패! 다시 시도해주세요.");
+      Sentry.captureException(error);
     }
   };
 
